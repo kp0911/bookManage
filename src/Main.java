@@ -111,11 +111,7 @@ public class Main {
         System.out.println("반납할 책을 선택 해주세요.");
 
         String checkInId = scanner.nextLine();
-        Book targetBook = bookMap.get(checkInId);
-
-        if (targetBook == null) {
-            throw new BookNotFoundException("해당 번호의 도서는 존재하지 않습니다.");
-        }
+        Book targetBook = getBookOrThrow(checkInId);
 
         // 가드 클로즈: 책이 대출 중이 아니면 튕겨냄
         if (!targetBook.isRented()){
@@ -123,12 +119,9 @@ public class Main {
             return;
         }
 
-        System.out.println("반납 하는 사용자의 ID를 입력 해주세요.");
-        String checkInUserId = scanner.nextLine();
-        User targetUser = userMap.get(checkInUserId);
+        User targetUser = getUserOrNull(scanner, "반납");
 
-        if (targetUser == null){
-            System.out.println("해당 사용자는 없습니다.");
+        if (targetUser == null) {
             return;
         }
 
@@ -149,11 +142,7 @@ public class Main {
     public static void checkOutBook(Scanner scanner){
         System.out.println("대출할 책의 번호(ID)를 입력 해주세요.");
         String checkOutId = scanner.nextLine();
-        Book targetBook = bookMap.get(checkOutId);
-
-        if (targetBook == null) {
-            throw new BookNotFoundException("해당 번호의 도서는 존재하지 않습니다.");
-        }
+        Book targetBook = getBookOrThrow(checkOutId);
 
         if (!targetBook.isRentable()) {
             System.out.println("해당 도서는 열람실 전용 참고자료이므로 대출할 수 없습니다.");
@@ -166,12 +155,9 @@ public class Main {
             return;
         }
 
-        System.out.println("대출하는 사용자의 ID를 입력 해주세요.");
-        String checkOutUserId = scanner.nextLine();
-        User targetUser = userMap.get(checkOutUserId);
+        User targetUser = getUserOrNull(scanner, "대출");
 
-        if (targetUser == null){
-            System.out.println("해당 사용자는 존재하지 않습니다.");
+        if (targetUser == null) {
             return;
         }
 
@@ -215,5 +201,26 @@ public class Main {
                 System.out.println("등급을 잘못 입력 했습니다. 다시 입력 해주세요.\n");
             }
         }
+    }
+
+    // 책의 존재 여부를 확인 하는 공통 함수
+    public static Book getBookOrThrow(String bookId) {
+        Book book = bookMap.get(bookId);
+        if (book == null) {
+            throw new BookNotFoundException("해당 번호의 도서는 존재하지 않습니다.");
+        }
+        return book;
+    }
+
+    // 유저를 입력 받아 존재 하는지 확인 하는 공통 함수
+    public static User getUserOrNull(Scanner scanner, String action) {
+        System.out.println(action + "하는 사용자의 ID를 입력 해주세요.");
+        String userId = scanner.nextLine();
+        User targetUser = userMap.get(userId);
+
+        if (targetUser == null) {
+            System.out.println("해당 사용자는 존재하지 않습니다.");
+        }
+        return targetUser;
     }
 }
