@@ -117,30 +117,37 @@ public class Main {
             throw new BookNotFoundException("해당 번호의 도서는 존재하지 않습니다.");
         }
 
-        if (targetBook.isRented()){
-            targetBook.setRented(false);
-            targetBook.setLocalDate(null);
-            System.out.println("[" + targetBook.getTitle() + "] 반납이 완료되었습니다.");
+        // 가드 클로즈: 책이 대출 중이 아니면 튕겨냄
+        if (!targetBook.isRented()){
+            System.out.println("해당 제목의 책은 이미 반납되어 있습니다.");
             return;
-        }else {
-            System.out.println("해당 제목의 책은 이미 반납 되어 있습니다.");
         }
-/*
-        for(Book book : bookMap.values()){
-            if (book.getTitle().equals(checkIn) && book.isRented()) {
-                book.setRented(false);
-                System.out.println("[" + book.getTitle() + "] 반납이 완료되었습니다.");
-                return;
-            }
+
+        System.out.println("반납 하는 사용자의 ID를 입력 해주세요.");
+        String checkInUserId = scanner.nextLine();
+        User targetUser = userMap.get(checkInUserId);
+
+        if (targetUser == null){
+            System.out.println("해당 사용자는 없습니다.");
+            return;
         }
-        System.out.println("해당 제목의 책은 존재하지 않거나 처리할 수 없습니다.");
- */
+
+        // 💡 핵심 검증 로직: 이 유저가 진짜로 이 책을 빌린 사람이 맞는지 확인!
+        if (!targetUser.getRentedBooks().contains(targetBook)) {
+            System.out.println("해당 도서는 [" + targetUser.getName() + "] 님이 대출한 도서가 아닙니다.");
+            return;
+        }
+
+        // 모든 검증을 통과했으므로 안전하게 반납 처리
+        targetBook.setRented(false);
+        targetBook.setLocalDate(null);
+        targetUser.removeRentedBook(targetBook);
+        System.out.println("[" + targetBook.getTitle() + "] 반납이 완료되었습니다.");
     }
 
     //도서 대출 매서드
     public static void checkOutBook(Scanner scanner){
-        System.out.println("대출할 책을 선택 해주세요.");
-
+        System.out.println("대출할 책의 번호(ID)를 입력 해주세요.");
         String checkOutId = scanner.nextLine();
         Book targetBook = bookMap.get(checkOutId);
 
@@ -153,14 +160,27 @@ public class Main {
             return;
         }
 
-        if (!targetBook.isRented()){
-            targetBook.setRented(true);
-            targetBook.setLocalDate(LocalDate.now().plusDays(7));
-            System.out.println("[" + targetBook.getTitle() + "] 대출이 완료되었습니다. (반납 예정일: " + targetBook.getLocalDate() + ")");
-               return;
-        }else {
-            System.out.println("해당 제목의 책은 이미 대출 되어 있습니다.");
+        // 💡 가드 클로즈: 사용자를 묻기 전에, 이미 남이 빌려간 책인지 먼저 확인해서 튕겨냄
+        if (targetBook.isRented()) {
+            System.out.println("해당 제목의 책은 이미 대출되어 있습니다.");
+            return;
         }
+
+        System.out.println("대출하는 사용자의 ID를 입력 해주세요.");
+        String checkOutUserId = scanner.nextLine();
+        User targetUser = userMap.get(checkOutUserId);
+
+        if (targetUser == null){
+            System.out.println("해당 사용자는 존재하지 않습니다.");
+            return;
+        }
+
+        // 모든 검증 통과 -> 대출 처리
+        targetBook.setRented(true);
+        targetBook.setLocalDate(LocalDate.now().plusDays(targetUser.getRentalDays()));
+        targetUser.addRentedBook(targetBook);
+
+        System.out.println("[" + targetBook.getTitle() + "] 대출이 완료되었습니다. (반납 예정일: " + targetBook.getLocalDate() + ")");
     }
 
     public static void showUser(){

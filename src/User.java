@@ -16,7 +16,7 @@ public class User {
 
     // 등급별 대여 가능 일수 반환 메서드 (다형성이나 if-else로 구현)
     public int getRentalDays() {
-        if (grade.equals("VIP")) {
+        if (grade.equals("vip")) {
             return 14; // VIP는 14일
         }
         return 7; // 기본은 7일
@@ -54,8 +54,18 @@ public class User {
         this.grade = grade;
     }
 
-    public void setRentedBooks(List<Book> rentedBooks) {
-        this.rentedBooks = rentedBooks;
+//    public void setRentedBooks(List<Book> rentedBooks) {
+//        this.rentedBooks = rentedBooks;
+//    }
+
+    //리스트에 대출 도서 추가 메서드
+    public void addRentedBook(Book book) {
+        this.rentedBooks.add(book);
+    }
+
+    //리스트에 대출 도서 반납 메서드
+    public void removeRentedBook(Book book) {
+        this.rentedBooks.remove(book);
     }
 
     @Override
