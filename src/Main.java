@@ -1,3 +1,4 @@
+import javax.sound.midi.Soundbank;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Scanner;
 public class Main {
     //static List<Book> bookMap = new ArrayList<>();
     static HashMap<String, Book> bookMap = new HashMap<>();
+    static HashMap<String, User> userMap = new HashMap<>();
 
     public static void main(String[] args) {
         initData(); // 프로그램 시작 시 초기 데이터 30권 세팅
@@ -21,7 +23,9 @@ public class Main {
             System.out.println("1. 전체 도서 조회");
             System.out.println("2. 도서 검색 (제목)");
             System.out.println("3. 도서 대출 및 반납 기능");
-            System.out.println("4. 프로그램 종료");
+            System.out.println("4. 회원 추가");
+            System.out.println("5. 회원 출력");
+            System.out.println("6. 프로그램 종료");
             System.out.print("메뉴를 선택하세요: ");
 
             String choice = scanner.nextLine();
@@ -50,6 +54,14 @@ public class Main {
                     }
                     break;
                 case "4":
+                    System.out.println("회원의 이름과 등급을 입력 해주세요.");
+                    registerUser(scanner);
+                    break;
+                case "5":
+                    System.out.println("회원의 정보를 출력 합니다.");
+                    showUser();
+                    break;
+                case "6":
                     System.out.println("프로그램을 종료합니다.");
                     isRunning = false;
                     break;
@@ -73,6 +85,8 @@ public class Main {
             String bookId = "B" + i;
             bookMap.put(bookId, new ReferenceBook(bookId, "참고자료", "백과사전" + i, false, "제1열람실"));
         }
+
+        userMap.put("U1", new User("U1", "관리자", "vip"));
     }
 
     public static void printAllBooks() {
@@ -147,18 +161,39 @@ public class Main {
         }else {
             System.out.println("해당 제목의 책은 이미 대출 되어 있습니다.");
         }
+    }
 
+    public static void showUser(){
+        for(User user : userMap.values()){
+            System.out.println(user);
+        }
+    }
 
-    /*
-        for(Book book : bookMap.values()){
-            if (book.getTitle().equals(checkOut) && !book.isRented()) {
-                book.setRented(true);
-                System.out.println("[" + book.getTitle() + "] 대출이 완료되었습니다.");
-                return;
+    //사용자 등록
+    public static void registerUser(Scanner scanner){
+        while (true){
+            System.out.print("이름을 입력 해주세요(나가시려면 x를 입력 해주세요): ");
+            String name = scanner.nextLine();
+
+            if(name.equals("x")){
+                System.out.println("회원 등록을 종료합니다.");
+                break;
+            }
+
+            System.out.print("등급을 입력 해주세요(nomal, vip): ");
+            String grade = scanner.nextLine();
+
+            if(grade.equals("vip") || grade.equals("nomal")){
+                // 2. [수정] ID 발급을 루프 안쪽으로 이동하여 회원마다 고유한 ID 부여
+                // (기존에 관리자 U1이 있으므로, size가 1이면 다음 회원은 U2가 됨)
+                String userId = "U" + (userMap.size() + 1);
+
+                userMap.put(userId, new User(userId, name, grade));
+                System.out.println(">> [" + name + "] 님이 성공적으로 등록되었습니다. (부여된 ID: " + userId + ")\n");
+            }
+            else {
+                System.out.println("등급을 잘못 입력 했습니다. 다시 입력 해주세요.\n");
             }
         }
-        System.out.println("해당 제목의 책은 존재하지 않거나 처리할 수 없습니다.");
-    */
-
     }
 }
