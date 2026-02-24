@@ -7,7 +7,6 @@ public class Book {
     private boolean isRented; // 대출 여부 (false: 대출가능, true: 대출중)
     private LocalDate localDate; // 대출 기간
 
-    // TODO 1: 4개의 필드를 초기화하는 생성자(Constructor)를 작성하세요.
     public Book(String id, String category, String title, boolean isRented){
         this.id = id;
         this.category = category;
@@ -16,7 +15,6 @@ public class Book {
         this.localDate = null;
     }
 
-    // TODO 2: private 필드에 접근할 수 있도록 Getter와 Setter를 작성하세요.
     //getter
     public String getTitle() {
         return title;
@@ -61,8 +59,6 @@ public class Book {
         this.localDate = localDate;
     }
 
-    // TODO 3: 책 정보를 깔끔한 문자열로 반환하거나 출력하는 메서드를 추가해 보세요.
-    // (Hint: toString() 메서드를 오버라이딩하면 아주 편리합니다.)
     @Override
     public String toString() {
         return "Book{" +

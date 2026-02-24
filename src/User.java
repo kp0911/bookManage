@@ -23,7 +23,6 @@ public class User {
     }
 
     //geter
-
     public String getId() {
         return id;
     }
@@ -53,10 +52,6 @@ public class User {
     public void setGrade(String grade) {
         this.grade = grade;
     }
-
-//    public void setRentedBooks(List<Book> rentedBooks) {
-//        this.rentedBooks = rentedBooks;
-//    }
 
     //리스트에 대출 도서 추가 메서드
     public void addRentedBook(Book book) {
